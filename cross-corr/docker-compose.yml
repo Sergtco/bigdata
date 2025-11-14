@@ -31,3 +31,8 @@ services:
     command: ["yarn", "nodemanager"]
     env_file:
       - ./config
+  advisor:
+    build: ./advisor
+    container_name: advisor
+    working_dir: /app
+    command: ["sleep", "infinity"]
