@@ -1,6 +1,6 @@
 services:
   namenode:
-    image: apache/hadoop:3
+    image: ghcr.io/apache/hadoop:3.4.2-lean
     hostname: namenode
     command: ["hdfs", "namenode"]
     ports:
@@ -10,14 +10,14 @@ services:
     environment:
       ENSURE_NAMENODE_DIR: "/tmp/hadoop-root/dfs/name"
   datanode:
-    image: apache/hadoop:3
+    image: ghcr.io/apache/hadoop:3.4.2-lean
     command: ["hdfs", "datanode"]
     ports:
       - 9864:9864
     env_file:
       - ./config
   resourcemanager:
-    image: apache/hadoop:3
+    image: ghcr.io/apache/hadoop:3.4.2-lean
     hostname: resourcemanager
     command: ["yarn", "resourcemanager"]
     ports:
@@ -27,7 +27,7 @@ services:
     volumes:
       - ./test.sh:/opt/test.sh
   nodemanager:
-    image: apache/hadoop:3
+    image: ghcr.io/apache/hadoop:3.4.2-lean
     command: ["yarn", "nodemanager"]
     env_file:
       - ./config
