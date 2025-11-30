@@ -30,7 +30,7 @@ public class CrossCorrelationPairs {
             entries = entries.subList(1, entries.size());
             for (int i = 0; i < entries.size(); i++) {
                 var first = entries.get(i);
-                for (int j = 0; j < entries.size(); j++) {
+                for (int j = i + 1; j < entries.size(); j++) {
                     var second = entries.get(j);
                     var diff = first.compareTo(second);
                     if (diff < 0) {
