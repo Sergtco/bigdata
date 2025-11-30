@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-import json
 import os
 from os.path import exists
 from traceback import print_exception
@@ -24,38 +23,45 @@ class State:
         url = self._makeurl(filename, "CREATE") + "&noredirect=true"
         resp = requests.put(url)
 
-        loc = str(resp.json()["Location"])
-        url = "http://localhost:" + ":".join(loc.split(":")[2:])
+        url = str(resp.json()["Location"])
+        print(url)
         resp = requests.put(url, data=open(path, "rb").read())
+        if resp.status_code >= 400 :
+            print("fail!")
+            print(str(resp.json()))
         print("OMG! SUCCCESS!")
-        
-    def get(self, path:str):
+
+    def get(self, path: str):
         url = self._makeurl(path, "OPEN") + "&noredirect=true"
         resp = requests.get(url)
 
-        loc = str(resp.json()["Location"])
-        url = "http://localhost:" + ":".join(loc.split(":")[2:])
+        url = str(resp.json()["Location"])
         resp = requests.get(url)
+        if resp.status_code >= 400:
+            print("fail!")
+            print(resp.text)
         filename = path.split("/")[-1]
         inc = ""
         while exists(filename + str(inc)):
             if inc == "":
                 inc = 1
             else:
-                inc+= 1
+                inc += 1
 
-        with open(filename+str(inc), mode="w") as f:
+        with open(filename + str(inc), mode="w") as f:
             f.write(resp.content.decode())
-            
+
         print("OMG! SUCCCESS!")
 
     def append(self, local_path: str, hdfs_path):
         url = self._makeurl(hdfs_path, "APPEND") + "&noredirect=true"
         resp = requests.post(url)
 
-        loc = str(resp.json()["Location"])
-        url = "http://localhost:" + ":".join(loc.split(":")[2:])
+        url = str(resp.json()["Location"])
         resp = requests.post(url, data=open(local_path).read())
+        if resp.status_code >= 400:
+            print("fail!")
+            print(resp.text)
         print("OMG! SUCCCESS!")
 
     def delete(self, path: str):
@@ -65,24 +71,29 @@ class State:
     def ls(self):
         resp = requests.get(self._makeurl("/".join(self.hpath), "LISTSTATUS"))
 
-        for  file in resp.json()["FileStatuses"]["FileStatus"]:
-            print(f"{file["type"]} {file["length"]} {file["permission"]} {file["owner"]}:{file["group"]} {file["pathSuffix"]}")
+        for file in resp.json()["FileStatuses"]["FileStatus"]:
+            print(
+                f"{file['type']} {file['length']} {file['permission']} {file['owner']}:{file['group']} {file['pathSuffix']}"
+            )
 
     def cd(self, path: str):
         url = ""
-        if path == "..": 
+        if path == "..":
             hpath = self.hpath[:-1]
-            url = self._makeurl("/".join(hpath), "LISTSTATUS")        
+            url = self._makeurl("/".join(hpath), "LISTSTATUS")
         else:
             url = self._makeurl("/".join(self.hpath) + "/" + path, "LISTSTATUS")
 
         resp = requests.get(url)
         if resp.status_code == 404:
             print("Directory not found!")
-        elif len(resp.json()["FileStatuses"]["FileStatus"]) > 0 and resp.json()["FileStatuses"]["FileStatus"][0]["pathSuffix"] == "":
+        elif (
+            len(resp.json()["FileStatuses"]["FileStatus"]) > 0
+            and resp.json()["FileStatuses"]["FileStatus"][0]["pathSuffix"] == ""
+        ):
             print("Cannot cd into file!")
         else:
-            if path =="..":
+            if path == "..":
                 self.hpath = self.hpath[:-1]
             else:
                 self.hpath.append(path)
@@ -99,15 +110,16 @@ class State:
         return f"http://{self.host}:{self.port}/webhdfs/v1/{path}?user.name={self.user}&op={op}"
 
     def help(self):
-        print('''
+        print("""
     ls <PATH> - list files
     help      - show this help message
-    ''')
+    """)
+
 
 def main():
     args = sys.argv
     state: State
-    try: 
+    try:
         state = State(host=args[1], port=int(args[2]), user=args[3], hpath=[], lpath=[])
     except Exception as e:
         print(f"Wrong arguments: {e}")
@@ -141,6 +153,7 @@ def main():
 
         except Exception as e:
             print_exception(e)
+
 
 if __name__ == "__main__":
     main()

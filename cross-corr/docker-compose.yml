@@ -3,6 +3,8 @@ services:
     image: ghcr.io/apache/hadoop:3.4.2-lean
     hostname: namenode
     command: ["hdfs", "namenode"]
+    volumes:
+      - ./:/opt/hadoop/app
     ports:
       - 9870:9870
     env_file:

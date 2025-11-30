@@ -1,4 +1,7 @@
 services:
+  app:
+    build: ./
+    command: ["sleep", "infinity"]
   namenode:
     image: ghcr.io/apache/hadoop:3.4.2-lean
     hostname: namenode
