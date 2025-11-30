@@ -10,18 +10,18 @@ if not (item.startswith("item") and item[4:].isdigit() and 0 <= int(item[4:]) <=
     print("Invalid input")
     os._exit(1)
 
-ccr_files = client.listdir("/ccr/output")
+ccr_files = client.listdir("/ccp/output")
 ccr_data = []
 for f in ccr_files:
     if f.startswith("part-"):
-        data = client.open("/ccr/output/" + f).read().decode()
+        data = client.open("/ccp/output/" + f).read().decode()
         ccr_data.extend(sorted(
             (line.split() for line in data.splitlines()
             if item in line.split()),
             reverse=True, key=lambda x: int(x[2])
         )[:10])
 ccr_data = sorted(ccr_data, key=lambda x: int(x[2]), reverse=True)
-print("CCR top 10:")
+print("CCP top 10:")
 pprint(ccr_data)
 
 
