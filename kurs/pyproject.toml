@@ -1,0 +1,11 @@
+[project]
+name = "twitter"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "graphframes-py>=0.10.0",
+    "pyspark>=4.0.1",
+    "typing-extensions>=4.15.0",
+]
