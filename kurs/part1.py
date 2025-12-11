@@ -1,8 +1,7 @@
-#!/usr/bin/env python3
+# Найти пользователя, имеющего наибольшую скорость написания сообщений.
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col, min as sparkmin, max as sparkmx, count, regexp_extract, when
-from datetime import datetime
+from pyspark.sql.functions import col, regexp_extract
 
 def main():
     if len(sys.argv) != 2:
@@ -102,10 +101,10 @@ def main():
     
     print(f"\n=== VERIFICATION ===")
     if rdd_user == sql_user:
-        print("✅ RDD и SparkSQL дают одинаковый результат!")
+        print(" RDD и SparkSQL дают одинаковый результат!")
         print(f"Победитель: {rdd_user}")
     else:
-        print("❌ RDD и SparkSQL результаты различаются!")
+        print(" RDD и SparkSQL результаты различаются!")
         print(f"RDD: {rdd_user}, SQL: {sql_user}")
     
     spark.stop()
