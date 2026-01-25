@@ -1,6 +1,6 @@
 cp input.txt data.txt
 
-for i in {1..2}; do
+for i in {1..5}; do
   cat data.txt \
   | python3 mapper_auth.py \
   | sort \
